@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odometer</title>
+    <link rel="icon" href="OIP.jpeg">
+</head>
+<style>
+    body{
+        height: 100vh;
+        margin: 0;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        background: #000;
+        color: #0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .Odometer{
+        display: flex;
+        background: #111;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px #0f0;
+    }
+    .digit-container{
+        width: 40px;
+        height: 50px;
+        overflow: hidden;
+        margin: 0 2px;
+        border: 2px solid #0f0;
+        background: #000;
+        border-radius: 6px;
+    }
+    .digit-strip{
+        transition: transform 0.4s ease-in-out;
+    }
+    .digit{
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 2rem;
+    }
+</style>
+<body>
+    <div class="Odometer" id="Odometer">
+        <div class="digit-container">
+            <div class="digit-strip"></div>
+        </div>
+        <div class="digit-container">
+            <div class="digit-strip"></div>
+        </div>
+        <div class="digit-container">
+            <div class="digit-strip"></div>
+        </div>
+        <div class="digit-container">
+            <div class="digit-strip"></div>
+        </div>
+        <div class="digit-container">
+            <div class="digit-strip"></div>
+        </div>
+    </div>
+
+    <script>
+        const stripHTML=Array.from({length:10},(_,i) =>`<div class="digit">${i}</div>`).join('');
+        const strips = document.querySelectorAll('.digit-strip');
+
+        strips.forEach(strip => strip.innerHTML= stripHTML);
+        
+        let count=0;
+        function updateOdometer() {
+            const str =count.toString().padStart(5,'0');
+            str.split('').forEach((digit,i)=> {
+                const y = parseInt(digit) * 50;
+                strips[i].style.transform = `translateY(-${y}px)`;
+            });
+            count = (count +1) % 100000;
+        }
+
+        setInterval(updateOdometer, 1000);
+
+    </script>
+</body>
+</html>
