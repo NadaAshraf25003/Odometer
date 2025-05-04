@@ -1,85 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odometer</title>
-    <link rel="icon" href="OIP.jpeg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Odometer Timer</title>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      font-family: 'Lucida Sans', Geneva, Verdana, sans-serif;
+      background: #000;
+      color: rgb(0, 179, 255);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: rgb(0, 179, 255);
+      text-shadow: 0 0 10px rgb(0, 179, 255);
+    }
+
+    .Odometer {
+      display: flex;
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgb(0, 179, 255);
+      margin-bottom: 30px;
+    }
+
+    .digit-container {
+      width: 40px;
+      height: 50px;
+      overflow: hidden;
+      margin: 0 2px;
+      border: 2px solid rgb(0, 179, 255);
+      background: #000;
+      border-radius: 6px;
+    }
+
+    .digit-strip {
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .digit {
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button, input, select {
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    button {
+      background-color: rgb(0, 179, 255);
+      color: #000;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: rgb(0, 179, 255);
+      scale: 0.97;
+    }
+
+    input[type="number"] {
+      width: 100px;
+      background: #111;
+      color: rgb(0, 179, 255);
+      border: 1px solid rgb(0, 179, 255);
+    }
+
+    select {
+      background: #111;
+      color: rgb(0, 179, 255);
+      border: 1px solid rgb(0, 179, 255);
+    }
+  </style>
 </head>
-<style>
-    body{
-        height: 100vh;
-        margin: 0;
-        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-        background: #000;
-        color: rgb(0, 179, 255);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .Odometer{
-        display: flex;
-        background: #111;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgb(0, 179, 255);
-    }
-    .digit-container{
-        width: 40px;
-        height: 50px;
-        overflow: hidden;
-        margin: 0 2px;
-        border: 2px solid rgb(0, 179, 255);
-        background: #000;
-        border-radius: 6px;
-    }
-    .digit-strip{
-        transition: transform 0.4s ease-in-out;
-    }
-    .digit{
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        font-size: 2rem;
-    }
-</style>
 <body>
-    <div class="Odometer" id="Odometer">
-        <div class="digit-container">
-            <div class="digit-strip"></div>
-        </div>
-        <div class="digit-container">
-            <div class="digit-strip"></div>
-        </div>
-        <div class="digit-container">
-            <div class="digit-strip"></div>
-        </div>
-        <div class="digit-container">
-            <div class="digit-strip"></div>
-        </div>
-        <div class="digit-container">
-            <div class="digit-strip"></div>
-        </div>
-    </div>
+  <h1>Timer</h1>
 
-    <script>
-        const stripHTML=Array.from({length:10},(_,i) =>`<div class="digit">${i}</div>`).join('');
-        const strips = document.querySelectorAll('.digit-strip');
+  <div class="Odometer" id="Odometer">
+    <div class="digit-container"><div class="digit-strip"></div></div>
+    <div class="digit-container"><div class="digit-strip"></div></div>
+    <div class="digit-container"><div class="digit-strip"></div></div>
+    <div class="digit-container"><div class="digit-strip"></div></div>
+    <div class="digit-container"><div class="digit-strip"></div></div>
+  </div>
 
-        strips.forEach(strip => strip.innerHTML= stripHTML);
-        
-        let count=0;
-        function updateOdometer() {
-            const str =count.toString().padStart(5,'0');
-            str.split('').forEach((digit,i)=> {
-                const y = parseInt(digit) * 50;
-                strips[i].style.transform = `translateY(-${y}px)`;
-            });
-            count = (count +1) % 100000;
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="resetBtn">Reset</button>
+    <!-- <input type="number" id="startValue" placeholder="Start value" min="0" max="99999" /> -->
+    <!-- <select id="modeSelect"> -->
+      <!-- <option value="up">Count Up</option>
+      <option value="down">Count Down</option> -->
+    <!-- </select> -->
+   </div>
+    <label>
+      <input type="checkbox" id="soundToggle" />
+      Sound
+    </label>
+
+  <script>
+    const stripHTML = Array.from({ length: 10 }, (_, i) => `<div class="digit">${i}</div>`).join('');
+    const strips = document.querySelectorAll('.digit-strip');
+    strips.forEach(strip => strip.innerHTML = stripHTML);
+
+    let count = 0;
+    let intervalId = null;
+    // let mode = 'up';
+
+    function playBeep() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.type = 'square';
+      oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.05);
+    }
+
+    function updateOdometer() {
+      const str = count.toString().padStart(5, '0');
+      str.split('').forEach((digit, i) => {
+        const y = parseInt(digit) * 50;
+        strips[i].style.transform = `translateY(-${y}px)`;
+      });
+
+      if (document.getElementById('soundToggle').checked) playBeep();
+
+    //   if (mode === 'up') {
+        count = (count + 1) % 100000;
+    //   } else if (mode === 'down') {
+        // count = count > 0 ? count - 1 : 0;
+        if (count === 0) {
+          clearInterval(intervalId);
+          intervalId = null;
         }
+    //   }
+    }
 
-        setInterval(updateOdometer, 1000);
+    document.getElementById('startBtn').addEventListener('click', () => {
+    //   mode = document.getElementById('modeSelect').value;
+      if (!intervalId) intervalId = setInterval(updateOdometer, 1000);
+    });
 
-    </script>
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      clearInterval(intervalId);
+      intervalId = null;
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      clearInterval(intervalId);
+      intervalId = null;
+    //   const inputVal = parseInt(document.getElementById('startValue').value);
+    //   count = !isNaN(inputVal) && inputVal >= 0 && inputVal <= 99999 ? inputVal : 0;
+      count=0;
+      updateOdometer();
+    });
+
+    updateOdometer(); // initial display
+  </script>
 </body>
 </html>
